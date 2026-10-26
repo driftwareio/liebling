@@ -7,7 +7,7 @@ body {
   min-height: 100vh;
   color: var(--primary-foreground-color);
   font-size: 1rem;
-  font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif;
+  font-family: var(--gh-font-body, 'Source Sans Pro'), Helvetica, Arial, sans-serif;
   font-display: swap;
   overflow-x: hidden;
   background-color: var(--background-color);
@@ -59,4 +59,17 @@ fieldset {
 .medium-zoom-overlay,
 .medium-zoom-image {
   z-index: 5;
+}
+
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--gh-font-heading, 'Source Sans Pro'), Helvetica, Arial, sans-serif;
+}
+
+/* Only Liebling's own icon spans render slider arrows. */
+.swiper-button-next::after, .swiper-button-prev::after,
+.swiper-button-next > .swiper-navigation-icon,
+.swiper-button-prev > .swiper-navigation-icon {
+  display: none;
+  content: none;
 }

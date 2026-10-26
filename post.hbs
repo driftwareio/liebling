@@ -5,7 +5,7 @@ This template is used for the post page.
 {{!-- This block preloads specific assets for the post page --}}
 {{#contentFor "preload"}}
   <link rel="preload" href="{{asset "css/post.css"}}" as="style" />
-  <link rel="preload" href="{{asset "js/post.js"}}" as="script" />
+  <link rel="modulepreload" href="{{asset "js/post.js"}}" />
 {{/contentFor}}
 
 {{!-- This block loads specific styles for the post page --}}
@@ -142,18 +142,19 @@ into the {body} of the default.hbs template --}}
                 {{/if}}
                 {{#if primary_author.facebook}}
                   <li>
-                    <a href="https://facebook.com/{{primary_author.facebook}}" target="_blank" rel="noopener" aria-label="Facebook">
+                    <a href="{{#with primary_author}}{{social_url type="facebook"}}{{/with}}" target="_blank" rel="noopener" aria-label="Facebook">
                       <span class="icon-facebook" aria-hidden="true"></span>
                     </a>
                   </li>
                 {{/if}}
                 {{#if primary_author.twitter}}
                   <li>
-                    <a href="https://twitter.com/{{primary_author.twitter}}" target="_blank" rel="noopener" aria-label="Twitter">
+                    <a href="{{#with primary_author}}{{social_url type="twitter"}}{{/with}}" target="_blank" rel="noopener" aria-label="Twitter">
                       <span class="icon-twitter" aria-hidden="true"></span>
                     </a>
                   </li>
                 {{/if}}
+                {{> author-social-links primary_author}}
               </ul>
             </div>
           </div>
@@ -207,5 +208,5 @@ into the {body} of the default.hbs template --}}
 
 {{!-- The #contentFor helper here will send everything inside it up to the matching #block helper found in default.hbs --}}
 {{#contentFor "scripts"}}
-  <script defer src="{{asset "js/post.js"}}"></script>
+  <script type="module" src="{{asset "js/post.js"}}"></script>
 {{/contentFor}}

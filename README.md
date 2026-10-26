@@ -1,3 +1,17 @@
+> **DriftWare fork: Ghost 6 refresh**
+>
+> Build and validate with Node 24: `npm ci --prefix src`, then
+> `npm run production --prefix src`, `npm run check --prefix src`,
+> and `npm test --prefix src`. Upload the resulting `liebling.zip` to Ghost.
+>
+> Browser libraries are pinned CDN imports. No consent manager, analytics wrapper,
+> embed blocker, local library mirror or source from `liebling-old` is included.
+> See [maintenance and Ghost feature support](docs/maintenance.md) for verification,
+> dependency updates, deployment configuration and remaining limitations.
+>
+> The upstream preview, download and wiki links below describe the original theme;
+> use this fork’s build commands and maintenance guide for development.
+
 # Liebling
 
 Liebling is a beautiful and clean Ghost theme that is easy and comfortable to use. **It's free** and you can use it for any kind of content you might have. Now with dark mode 🌓!
@@ -6,9 +20,9 @@ If you find this theme useful, please consider to make a donation to support its
 
 <a href="https://ko-fi.com/eddiesigner" target="_blank"><img src="https://res.cloudinary.com/edev/image/upload/v1583011476/button_y8hgt8.png" alt="Donate" style="width: 250px !important; height: 60px !important;" width="250" height="60"></a>
 
-## Ghost 5
+## Ghost 6
 
-This theme has been optimized for Ghost 5, if you are looking for a Ghost 4 compatible version please refer to [this link](https://github.com/eddiesigner/liebling/releases/tag/v1.5.2).
+This fork targets Ghost 6. Older Ghost versions are not supported by this refresh.
 
 ## Preview
 
@@ -117,19 +131,14 @@ To know how to enable the search, comments, newsletter and more, please head to 
 * Slovak by [jjuris](https://github.com/jjuris)
 * Thai by [Parinya T.](https://github.com/pickyzz)
 
-## Tests performed
+## Validation and development
 
-* W3C Markup Validation: [Correct validation](https://validator.w3.org/nu/?doc=https%3A%2F%2Fliebling.eduardogomez.io%2F)
-* Ghost GScan: [100/100 points](https://gscan.ghost.org/)
-* GTmetrix PageSpeed Score: **A (97%)**
-* PageSpeed Insights: **94/100** (mobile) **99/100** (desktop)
-* Pingdom Performance Grade: **A 91**
+GScan, archive checks and template contracts run through the commands above.
+Desktop and mobile browser checks use `npm run test:browser --prefix src`.
+See [maintenance.md](docs/maintenance.md) for the test scope and known audit exception.
 
-## Theme development
-
-Thanks to [D3473R](https://github.com/D3473R) 💪🏼 for creating a development environment with Docker. From now on you can work on this theme without installing a Ghost instance on your local machine. With two commands you have an instant development setup and you can build the theme for production.
-
-Please take a look to this page to see how it works: https://github.com/eddiesigner/liebling/wiki/Theme-development-with-Docker
+For a local development instance, run `docker compose -f src/docker-compose.yml up -d`
+with Docker, then `npm run watch --prefix src` to rebuild theme assets.
 
 ## Help and Support
 
