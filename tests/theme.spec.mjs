@@ -43,6 +43,7 @@ for (const viewport of [{width: 1280, height: 900}, {width: 390, height: 844}]) 
     await page.emulateMedia({reducedMotion: 'reduce'});
     await page.locator('.kg-callout-card').hover();
     await expect(page.locator('.kg-callout-card')).toHaveCSS('translate', 'none');
+    await expect(page.locator('.js-animation-wrapper')).toHaveCSS('opacity', '1');
     await page.screenshot({path: testInfo.outputPath('post.png'), fullPage: true});
     expect(errors).toEqual([]);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);

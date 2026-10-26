@@ -44,3 +44,12 @@ $animation-distance: 100px !default;
     }
   }
 }
+
+/* Keep content visible when the visitor requests less motion. */
+@media (prefers-reduced-motion: reduce) {
+  [data-animate^='fade'] {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
