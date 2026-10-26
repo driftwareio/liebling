@@ -1,12 +1,8 @@
-import $ from 'jquery';
-import Headroom from 'headroom.js';
-import tippy from 'tippy.js';
-import 'tippy.js/dist/tippy.css';
-import shave from 'shave';
-import GhostContentAPI from '@tryghost/content-api';
-import Fuse from 'fuse.js/dist/fuse.basic.esm.min.js';
-import Swiper, { FreeMode, A11y } from 'swiper';
-import 'swiper/css';
+import $ from 'https://cdn.jsdelivr.net/npm/jquery@4.0.0/+esm';
+import Headroom from 'https://cdn.jsdelivr.net/npm/headroom.js@0.12.0/+esm';
+import tippy from 'https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/+esm';
+import shave from 'https://cdn.jsdelivr.net/npm/shave@5.2.0/dist/shave.mjs';
+import Swiper from 'https://cdn.jsdelivr.net/npm/swiper@14.3.0/swiper-bundle.min.mjs';
 import { isRTL, formatDate, isMobile } from './helpers';
 
 $(() => {
@@ -37,8 +33,8 @@ $(() => {
   const $mainNav = $('.js-main-nav');
   const $mainNavLeft = $('.js-main-nav-left');
   const $newsletterElements = $('.js-newsletter');
-  const $nativeComments = $('.js-native-comments > div > iframe')[0];
-  const currentSavedTheme = localStorage.getItem('theme');
+  let currentSavedTheme = null;
+  try { currentSavedTheme = localStorage.getItem('theme'); } catch {}
 
   let fuse = null;
   let submenuIsOpen = false;
@@ -68,7 +64,7 @@ $(() => {
 
   const trySearchFeature = () => {
     if (typeof ghostSearchApiKey !== 'undefined' && typeof nativeSearchEnabled === 'undefined') {
-      getAllPosts(ghostHost, ghostSearchApiKey);
+      getAllPosts(ghostHost, ghostSearchApiKey).catch(console.error);
     } else {
       $openSearch.css('visibility', 'hidden');
       $closeSearch.remove();
@@ -76,7 +72,11 @@ $(() => {
     }
   };
 
-  const getAllPosts = (host, key) => {
+  const getAllPosts = async (host, key) => {
+    const [{default: GhostContentAPI}, {default: Fuse}] = await Promise.all([
+      import('https://cdn.jsdelivr.net/npm/@tryghost/content-api@1.12.13/+esm'),
+      import('https://cdn.jsdelivr.net/npm/fuse.js@7.5.0/+esm')
+    ]);
     const api = new GhostContentAPI({
       url: host,
       key,
@@ -167,24 +167,16 @@ $(() => {
         }
       });
 
-      let htmlString = '';
-
       if (bestResults.length > 0) {
-        for (let i = 0, len = bestResults.length; i < len; i++) {
-          htmlString += `
-          <article class="m-result">\
-            <a href="${bestResults[i].item.url}" class="m-result__link">\
-              <h3 class="m-result__title">${bestResults[i].item.title}</h3>\
-              <span class="m-result__date">${formatDate(
-                bestResults[i].item.published_at
-              )}</span>\
-            </a>\
-          </article>`;
-        }
-
+        const results = bestResults.map(({item}) => {
+          const article = $('<article>').addClass('m-result');
+          const link = $('<a>').addClass('m-result__link').attr('href', item.url);
+          link.append($('<h3>').addClass('m-result__title').text(item.title));
+          link.append($('<span>').addClass('m-result__date').text(formatDate(item.published_at)));
+          return article.append(link)[0];
+        });
         $searchNoResults.hide();
-        $searchResults.html(htmlString);
-        $searchResults.show();
+        $searchResults.empty().append(results).show();
       } else {
         $searchResults.html('');
         $searchResults.hide();
@@ -200,15 +192,13 @@ $(() => {
   $toggleDarkMode.on('change', () => {
     if ($toggleDarkMode.is(':checked')) {
       $('html').attr('data-theme', 'dark');
-      localStorage.setItem('theme', 'dark');
+      try { localStorage.setItem('theme', 'dark'); } catch {}
     } else {
       $('html').attr('data-theme', 'light');
-      localStorage.setItem('theme', 'light');
+      try { localStorage.setItem('theme', 'light'); } catch {}
     }
 
-    if ($nativeComments) {
-      $nativeComments.contentDocument.location.reload(true);
-    }
+    // Ghost owns the comments iframe; never access its cross-origin document.
   });
 
   $toggleDarkMode.on('mouseenter', () => {
@@ -301,10 +291,9 @@ $(() => {
 
   if ($recentSlider.length > 0) {
     const recentSwiper = new Swiper('.js-recent-slider', {
-      modules: [FreeMode, A11y],
       freeMode: true,
       slidesPerView: 'auto',
-      a11y: true,
+      a11y: { enabled: true },
       on: {
         init: function() {
           shave('.js-recent-article-title', 50);

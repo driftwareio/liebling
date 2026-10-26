@@ -1,15 +1,16 @@
-version: "3"
-
 services:
   ghost:
-    image: ghost:5.49.0
+    image: ghost:6
     container_name: ghost
     volumes:
       - ./..:/var/lib/ghost/content/themes/liebling:Z
-      - ./ghost.db:/var/lib/ghost/content/data/ghost.db:Z
+      - ghost-data:/var/lib/ghost/content/data
     environment:
       NODE_ENV: development
       database__client: sqlite3
       database__connection__filename: content/data/ghost.db
     ports:
       - 2368:2368
+
+volumes:
+  ghost-data:

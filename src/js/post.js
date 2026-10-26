@@ -1,9 +1,8 @@
-import $ from 'jquery';
-import mediumZoom from 'medium-zoom';
-import fitvids from 'fitvids';
-import shave from 'shave';
-import Swiper, { Navigation, A11y } from 'swiper';
-import 'swiper/css';
+import $ from 'https://cdn.jsdelivr.net/npm/jquery@4.0.0/+esm';
+import mediumZoom from 'https://cdn.jsdelivr.net/npm/medium-zoom@1.1.2/+esm';
+import fitvids from 'https://cdn.jsdelivr.net/npm/fitvids@2.1.1/+esm';
+import shave from 'https://cdn.jsdelivr.net/npm/shave@5.2.0/dist/shave.mjs';
+import Swiper from 'https://cdn.jsdelivr.net/npm/swiper@14.3.0/swiper-bundle.min.mjs';
 import {
   isMobile,
   adjustImageGallery,
@@ -117,20 +116,20 @@ $(() => {
 
   if ($recommendedSlider.length > 0) {
     const recommendedSwiper = new Swiper('.js-recommended-slider', {
-      modules: [Navigation, A11y],
       navigation: {
+        addIcons: false,
         nextEl: '.swiper-button-next',
         prevEl: '.swiper-button-prev'
       },
       slidesPerView: 1,
       allowTouchMove: true,
-      loop: true,
-      a11y: true,
+      loop: false,
+      a11y: { enabled: true },
       breakpoints: {
         720: {
           slidesPerView: 2,
           allowTouchMove: true,
-          loop: true
+          loop: false
         },
         1024: {
           slidesPerView: 3,

@@ -1,0 +1,44 @@
+name: Release Ghost theme
+on:
+  push:
+    tags: ['v*']
+permissions:
+  contents: read
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+      - name: Verify version tag matches theme metadata
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          [[ "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$ ]]
+          node -e "if ('v' + require('./package.json').version !== process.env.RELEASE_TAG) process.exit(1)"
+      - run: npm ci --prefix src --no-audit --no-fund
+      - run: npm run audit --prefix src
+      - run: npm run production --prefix src
+      - run: npm run check --prefix src
+      - run: npm test --prefix src
+      - name: Publish ZIP, checksum and changelog
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          sha256sum liebling.zip > liebling.zip.sha256
+          previous_tag="$(git describe --tags --abbrev=0 "${GITHUB_SHA}^" 2>/dev/null || true)"
+          notes_file="$(mktemp)"
+          if [[ -n "$previous_tag" ]]; then
+            printf '**Changelog:** https://github.com/%s/compare/%s...%s\n' "$GITHUB_REPOSITORY" "$previous_tag" "$RELEASE_TAG" > "$notes_file"
+          else
+            printf 'First release of the refreshed Ghost 6 theme.\n' > "$notes_file"
+          fi
+          gh release create "$RELEASE_TAG" liebling.zip liebling.zip.sha256 --verify-tag --generate-notes --notes-file "$notes_file" --title "Liebling $RELEASE_TAG"

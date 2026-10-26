@@ -7,7 +7,7 @@ It can be used also as the home page or the default page.
 {{#contentFor "preload"}}
   <link rel="preload" href="{{asset "css/home.css"}}" as="style" />
   <link rel="preload" href="{{asset "css/listing.css"}}" as="style" />
-  <link rel="preload" href="{{asset "js/home.js"}}" as="script" />
+  <link rel="modulepreload" href="{{asset "js/home.js"}}" />
 {{/contentFor}}
 
 {{!-- This block loads specific styles for the index page --}}
@@ -115,5 +115,5 @@ into the {body} of the default.hbs template --}}
 
 {{!-- The #contentFor helper here will send everything inside it up to the matching #block helper found in default.hbs --}}
 {{#contentFor "scripts"}}
-  <script defer src="{{asset "js/home.js"}}"></script>
+  <script type="module" src="{{asset "js/home.js"}}"></script>
 {{/contentFor}}

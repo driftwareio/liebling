@@ -39,33 +39,18 @@ export const adjustImageGallery = () => {
 
   for (var i = 0, len = images.length; i < len; i++) {
     const container = images[i].closest('.kg-gallery-image');
-    const width = images[i].attributes.width.value;
-    const height = images[i].attributes.height.value;
+    const width = Number(images[i].getAttribute('width'));
+    const height = Number(images[i].getAttribute('height'));
+    if (!width || !height) continue;
     const ratio = width / height;
     container.style.flex = `${ratio} 1 0%`;
   }
 };
 
 export const managePostImages = $ => {
-  $('.js-post-content')
-    .find('img')
-    .each(function() {
-      if (
-        !$(this)
-          .closest('figure')
-          .hasClass('kg-bookmark-card') &&
-        !$(this)
-          .closest('figure')
-          .hasClass('kg-nft-card') &&
-        !$(this)
-          .parent()
-          .is('a') &&
-        !$(this).hasClass('kg-product-card-image') &&
-        !$(this).hasClass('kg-audio-thumbnail')
-      ) {
-        $(this).addClass('js-zoomable');
-      }
-    });
+  $('.js-post-content .kg-image-card img, .js-post-content .kg-gallery-image img')
+    .filter(function() { return !this.closest('a'); })
+    .addClass('js-zoomable');
 };
 
 export const makeImagesZoomable = ($, mediumZoom) => {
